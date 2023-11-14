@@ -169,7 +169,7 @@ import (
 var Key = %s
 var Code = %s
 %s
-
+	var yr = "Hello World"
     decodedSc, _ := %s.DecodeString(Code)
     decodedKey, _ := %s.DecodeString(Key)
 

@@ -1,6 +1,6 @@
 module github.com/cmepw/myph
 
-go 1.19
+go 1.20
 
 require (
 	github.com/spf13/cobra v1.7.0
@@ -14,4 +14,5 @@ require (
 	github.com/tc-hib/winres v0.2.0 // indirect
 	golang.org/x/image v0.1.0 // indirect
 	golang.org/x/sys v0.10.0 // indirect
+	mvdan.cc/garble v0.10.1
 )
