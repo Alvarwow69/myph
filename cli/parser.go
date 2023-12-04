@@ -51,20 +51,18 @@ func BuildLoader(opts *Options) *exec.Cmd {
 		fmt.Println("[*] Compiling payload as dll...")
 
 		if opts.StringObfuscation {
-			return exec.Command("go", "build", "-buildmode=c-shared", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.dll", ".")
+			return exec.Command("garble", "-literals", "build", "-buildmode=c-shared", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.dll", ".")
 		}
 		return exec.Command("go", "build", "-buildmode=c-shared", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.dll", ".")
 	} else if opts.BuildType == "exe" {
 		fmt.Println("[*] Compiling payload as executable...")
 
 		if opts.StringObfuscation {
-			return exec.Command("go", "build", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.exe", ".")
+			return exec.Command("garble", "-literals", "build", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.exe", ".")
 		}
-		return exec.Command("garble", "-literals", "build", "-ldflags", "-s -w -H=windowsgui", "-o", "payload.exe", ".")
-	} else {
-		fmt.Printf("[!] Buildtype format not supported!")
-		return nil
 	}
+	fmt.Printf("[!] Buildtype format not supported!")
+	return nil
 }
 
 func GetParser(opts *Options) *cobra.Command {
